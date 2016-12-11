@@ -5,24 +5,29 @@ package gov.usgs.volcanoes.swarmPlotter;
  */
 
 
+import java.awt.Dimension;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.martiansoftware.jsap.FlaggedOption;
 import com.martiansoftware.jsap.JSAP;
 import com.martiansoftware.jsap.JSAPResult;
 import com.martiansoftware.jsap.Parameter;
 import com.martiansoftware.jsap.Switch;
-import com.martiansoftware.jsap.UnflaggedOption;
 
 import gov.usgs.volcanoes.core.args.Args;
+import gov.usgs.volcanoes.core.args.ArgumentException;
 import gov.usgs.volcanoes.core.args.Arguments;
-import gov.usgs.volcanoes.core.args.decorator.ConfigFileArg;
-import gov.usgs.volcanoes.core.args.decorator.CreateConfigArg;
-import gov.usgs.volcanoes.core.args.decorator.DateRangeArg;
+import gov.usgs.volcanoes.core.args.decorator.DimensionArg;
+import gov.usgs.volcanoes.core.args.decorator.TimeSpanArg;
+import gov.usgs.volcanoes.core.args.decorator.TimeZoneArg;
 import gov.usgs.volcanoes.core.args.decorator.VerboseArg;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Date;
+import gov.usgs.volcanoes.core.time.TimeSpan;
+import gov.usgs.volcanoes.swarm.data.SeismicDataSource;
 
 /**
  * Argument processor for Pensive.
@@ -38,63 +43,120 @@ public class SwarmPlotterArgs {
   /** format of time on cmd line */
   public static final String INPUT_TIME_FORMAT = "yyyyMMddHHmm";
 
-  private static final Parameter[] PARAMETERS =
-      new Parameter[] {new FlaggedOption("plotType", new PlotTypeParser(), JSAP.NO_DEFAULT,
-          JSAP.REQUIRED, 't', "plotType", String.format("One of:  %s\n", PlotType.types()))};
+  public static final String DEFAULT_HELI_ROW_SPAN = "30";
+  public static final Map<PlotType, Dimension> DEFAULT_DIMENSION;
+  private static final String dimensionDefaults;
+
+  static {
+    DEFAULT_DIMENSION = new HashMap<PlotType, Dimension>();
+    DEFAULT_DIMENSION.put(PlotType.HELI, new Dimension(800, 800));
+
+    StringBuffer sb = new StringBuffer();
+    for (PlotType type : DEFAULT_DIMENSION.keySet()) {
+      Dimension d = DEFAULT_DIMENSION.get(type);
+      sb.append(type).append(": ").append(d.height).append(" x ").append(d.width).append("\n");
+    }
+
+    dimensionDefaults = sb.toString();
+  }
+
+
+  private static final Parameter[] PARAMETERS = new Parameter[] {
+      new Switch("heliSuppressClip", JSAP.NO_SHORTFLAG, "heliSuppressClip",
+          "Do not highlight clipping."),
+      new Switch("heliForceCenter", JSAP.NO_SHORTFLAG, "heliForceCenter",
+          "Force center heli rows."),
+      new Switch("plotLabel", 'l', "plotLabel", "Label plot."),
+      new FlaggedOption("plotType", new PlotTypeParser(), JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p',
+          "plotType", String.format("One of:  %s\n", PlotType.types())),
+      new FlaggedOption("channel", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c',
+          "channel", "channel as S_C_N_L\n"),
+      new FlaggedOption("dataSource", new SeismicDataSourceParser(), JSAP.NO_DEFAULT, JSAP.REQUIRED, 's',
+          "dataSource", "Seismic data source.\n"),
+     new FlaggedOption("heliRowSpan", JSAP.DOUBLE_PARSER, DEFAULT_HELI_ROW_SPAN, JSAP.NOT_REQUIRED, 'r',
+          "heliRowSpan", "Length of heli row in minutes\n")};
 
   /** If true, log more. */
   public final boolean verbose;
 
-  /** Earliest sample to plot. */
-  public final long startTime;
-
-  /** Latest sample to plot. */
-  public final long endTime;
+  /** Time span of plot. */
+  public final TimeSpan timeSpan;
 
   /** my config file. */
   public final PlotType plotType;
 
   /** help requested */
   public final boolean help;
+
+  public final String channel;
+
+  public final double heliRowSpan;
+
+  public final boolean heliSuppressClip;
+
+  public final boolean heliForceCenter;
+
+  public final boolean plotLabel;
+
+  public final Dimension dimension;
+  
+  public final TimeZone timeZone;
+  
+  public final SeismicDataSource seismicDataSource;
+
   /**
    * Class constructor.
    * 
    * @param commandLineArgs the command line arguments
    * @throws Exception when things go wrong
    */
-  public SwarmPlotterArgs(final String[] commandLineArgs) throws Exception {
+  public SwarmPlotterArgs(final String[] commandLineArgs) throws ArgumentException {
     Arguments args = null;
     args = new Args(PROGRAM_NAME, EXPLANATION, PARAMETERS);
-    args = new DateRangeArg(INPUT_TIME_FORMAT, args);
+    args = new TimeSpanArg(INPUT_TIME_FORMAT, true, args);
     args = new VerboseArg(args);
+    args = new TimeZoneArg(args);
+    args = new DimensionArg(dimensionDefaults, args);
 
     JSAPResult jsapResult = null;
     jsapResult = args.parse(commandLineArgs);
 
+    if (!jsapResult.success()) {
+      throw new ArgumentException("Unable to parse command line.");
+    }
+
     help = jsapResult.getBoolean("help");
     LOGGER.debug("Setting: help={}", help);
-    
+
     verbose = jsapResult.getBoolean("verbose");
     LOGGER.debug("Setting: verbose={}", verbose);
 
     plotType = (PlotType) jsapResult.getObject("plotType");
     LOGGER.debug("Setting: plotType={}", plotType);
+
+    timeSpan = (TimeSpan) jsapResult.getObject("timeSpan");
+    LOGGER.debug("Setting: timeSpan={}", timeSpan);
+
+    timeZone = (TimeZone) jsapResult.getObject("timeZone");
+    LOGGER.debug("Setting: timeZone={}", timeZone);
     
-    final Date startDate = jsapResult.getDate("startTime");
-    if (startDate == null) {
-      startTime = Long.MIN_VALUE;
-    } else {
-      startTime = jsapResult.getDate("startTime").getTime();
-    }
-    LOGGER.debug("Setting: startTime={}", startTime);
+    channel = jsapResult.getString("channel");
 
-    final Date endDate = jsapResult.getDate("endTime");
-    if (endDate == null) {
-      endTime = Long.MIN_VALUE;
-    } else {
-      endTime = jsapResult.getDate("endTime").getTime();
-    }
-    LOGGER.debug("Setting: endTime={}", endTime);
+    heliRowSpan = jsapResult.getDouble("heliRowSpan") * 60;
+    LOGGER.debug("Setting: heliRowSpan={}", heliRowSpan);
 
+    heliSuppressClip = jsapResult.contains("heliSuppressClip");
+
+    heliForceCenter = jsapResult.contains("heliForceCenter");
+    plotLabel = jsapResult.contains("plotLabel");
+    
+    seismicDataSource =  (SeismicDataSource) jsapResult.getObject("dataSource");
+    LOGGER.debug("Setting: seismicDataSource={}", seismicDataSource);
+
+    if (jsapResult.contains("dimension")) {
+      dimension = (Dimension) jsapResult.getObject("dimension");
+    } else {
+      dimension = DEFAULT_DIMENSION.get(plotType);
+    }
   }
 }

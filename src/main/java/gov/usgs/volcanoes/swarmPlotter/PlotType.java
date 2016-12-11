@@ -1,6 +1,11 @@
 package gov.usgs.volcanoes.swarmPlotter;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+
+import gov.usgs.volcanoes.swarmPlotter.plotter.HeliPlotter;
+import gov.usgs.volcanoes.swarmPlotter.plotter.Plotter;
+import gov.usgs.volcanoes.swarmPlotter.plotter.WavePlotter;
 
 /**
  * Enumerate known plot types.
@@ -8,14 +13,32 @@ import java.util.Arrays;
  * @author Tom Parker
  */
 public enum PlotType {
-    HELI, 
-    WAVE;
+  HELI(HeliPlotter.class), WAVE(WavePlotter.class);
 
-    public static String types() {
-      StringBuffer sb = new StringBuffer();
-      for (PlotType type : Arrays.asList(values())) {
-        sb.append(type.toString().toLowerCase() + ", ");
-      }
-      return  sb.substring(0, sb.length()-2);
+  private Class<? extends Plotter> plotter;
+
+  PlotType(Class<? extends Plotter> plotter) {
+    this.plotter = plotter;
+  }
+
+  public static String types() {
+    StringBuffer sb = new StringBuffer();
+    for (PlotType type : Arrays.asList(values())) {
+      sb.append(type.toString().toLowerCase() + ", ");
     }
+    return sb.substring(0, sb.length() - 2);
+  }
+
+  public String toString() {
+    return this.name().toLowerCase();
+  }
+  
+  public Plotter getPlotter(SwarmPlotterArgs config) throws IllegalArgumentException {
+    try {
+      return plotter.getConstructor(SwarmPlotterArgs.class).newInstance(config);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      throw new IllegalArgumentException(e);
+    }
+  }
 }
