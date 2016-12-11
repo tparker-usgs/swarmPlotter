@@ -50,7 +50,6 @@ public class HeliPlotter extends Plotter {
   private HelicorderSettings configureHeli(SwarmPlotterArgs config) {
     HelicorderSettings settings = new HelicorderSettings();
     settings.channel = config.channel;
-    settings.channel = settings.channel.replace('_', '$');
 
     settings.endTime = J2kSec.fromEpoch(config.timeSpan.endTime);
     settings.startTime = J2kSec.fromEpoch(config.timeSpan.startTime);

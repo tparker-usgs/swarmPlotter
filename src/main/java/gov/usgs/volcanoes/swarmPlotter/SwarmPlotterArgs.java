@@ -50,6 +50,8 @@ public class SwarmPlotterArgs {
   static {
     DEFAULT_DIMENSION = new HashMap<PlotType, Dimension>();
     DEFAULT_DIMENSION.put(PlotType.HELI, new Dimension(800, 800));
+    DEFAULT_DIMENSION.put(PlotType.WAVE, new Dimension(750, 280));
+    DEFAULT_DIMENSION.put(PlotType.SPECTROGRAM, new Dimension(925, 280));
 
     StringBuffer sb = new StringBuffer();
     for (PlotType type : DEFAULT_DIMENSION.keySet()) {
@@ -66,6 +68,8 @@ public class SwarmPlotterArgs {
           "Do not highlight clipping."),
       new Switch("heliForceCenter", JSAP.NO_SHORTFLAG, "heliForceCenter",
           "Force center heli rows."),
+      new Switch("spectrogramWave", JSAP.NO_SHORTFLAG, "spectrogramWave",
+          "Plot waveform above spectrogram."),
       new Switch("plotLabel", 'l', "plotLabel", "Label plot."),
       new FlaggedOption("plotType", new PlotTypeParser(), JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p',
           "plotType", String.format("One of:  %s\n", PlotType.types())),
@@ -74,7 +78,8 @@ public class SwarmPlotterArgs {
       new FlaggedOption("dataSource", new SeismicDataSourceParser(), JSAP.NO_DEFAULT, JSAP.REQUIRED, 's',
           "dataSource", "Seismic data source.\n"),
      new FlaggedOption("heliRowSpan", JSAP.DOUBLE_PARSER, DEFAULT_HELI_ROW_SPAN, JSAP.NOT_REQUIRED, 'r',
-          "heliRowSpan", "Length of heli row in minutes\n")};
+          "heliRowSpan", "Length of heli row in minutes\n")
+     };
 
   /** If true, log more. */
   public final boolean verbose;
@@ -140,7 +145,7 @@ public class SwarmPlotterArgs {
     timeZone = (TimeZone) jsapResult.getObject("timeZone");
     LOGGER.debug("Setting: timeZone={}", timeZone);
     
-    channel = jsapResult.getString("channel");
+    channel = jsapResult.getString("channel").replace('_', '$');
 
     heliRowSpan = jsapResult.getDouble("heliRowSpan") * 60;
     LOGGER.debug("Setting: heliRowSpan={}", heliRowSpan);

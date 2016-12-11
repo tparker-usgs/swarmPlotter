@@ -1,11 +1,12 @@
 package gov.usgs.volcanoes.swarmPlotter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 import gov.usgs.volcanoes.swarmPlotter.plotter.HeliPlotter;
 import gov.usgs.volcanoes.swarmPlotter.plotter.Plotter;
+import gov.usgs.volcanoes.swarmPlotter.plotter.SpectrogramPlotter;
 import gov.usgs.volcanoes.swarmPlotter.plotter.WavePlotter;
+import gov.usgs.volcanoes.swarmPlotter.plotter.SpectrogramPlotter;
 
 /**
  * Enumerate known plot types.
@@ -13,7 +14,9 @@ import gov.usgs.volcanoes.swarmPlotter.plotter.WavePlotter;
  * @author Tom Parker
  */
 public enum PlotType {
-  HELI(HeliPlotter.class), WAVE(WavePlotter.class);
+  HELI(HeliPlotter.class), 
+  WAVE(WavePlotter.class),
+  SPECTROGRAM(SpectrogramPlotter.class);
 
   private Class<? extends Plotter> plotter;
 
