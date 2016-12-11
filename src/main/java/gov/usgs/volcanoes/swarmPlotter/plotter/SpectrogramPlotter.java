@@ -66,7 +66,7 @@ public class SpectrogramPlotter extends WavePlotter {
 
     plot.addRenderer(sr);
     try {
-      plot.writePNG("wave.png");
+      plot.writePNG(config.outputFile);
     } catch (PlotException e) {
       throw new UtilException("Cannot write file. (" + e.getLocalizedMessage() + ")");
     }

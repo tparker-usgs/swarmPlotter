@@ -18,6 +18,7 @@ import com.martiansoftware.jsap.JSAP;
 import com.martiansoftware.jsap.JSAPResult;
 import com.martiansoftware.jsap.Parameter;
 import com.martiansoftware.jsap.Switch;
+import com.martiansoftware.jsap.UnflaggedOption;
 
 import gov.usgs.volcanoes.core.args.Args;
 import gov.usgs.volcanoes.core.args.ArgumentException;
@@ -108,6 +109,9 @@ public class SwarmPlotterArgs {
   public final TimeZone timeZone;
   
   public final SeismicDataSource seismicDataSource;
+  
+  
+  public final String outputFile;
 
   /**
    * Class constructor.
@@ -122,8 +126,9 @@ public class SwarmPlotterArgs {
     args = new VerboseArg(args);
     args = new TimeZoneArg(args);
     args = new DimensionArg(dimensionDefaults, args);
-
+    args.registerParameter(new UnflaggedOption("outputFile", JSAP.STRING_PARSER, JSAP.REQUIRED, "Output file name\n"));
     JSAPResult jsapResult = null;
+    
     jsapResult = args.parse(commandLineArgs);
 
     if (!jsapResult.success()) {
@@ -158,6 +163,9 @@ public class SwarmPlotterArgs {
     seismicDataSource =  (SeismicDataSource) jsapResult.getObject("dataSource");
     LOGGER.debug("Setting: seismicDataSource={}", seismicDataSource);
 
+    outputFile = jsapResult.getString("outputFile");
+    LOGGER.debug("Setting: outputFile={}", outputFile);
+    
     if (jsapResult.contains("dimension")) {
       dimension = (Dimension) jsapResult.getObject("dimension");
     } else {

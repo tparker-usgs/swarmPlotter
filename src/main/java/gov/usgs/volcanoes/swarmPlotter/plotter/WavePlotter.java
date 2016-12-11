@@ -74,7 +74,7 @@ public class WavePlotter extends Plotter {
     
     plot.addRenderer(wr);
     try {
-      plot.writePNG("wave.png");
+      plot.writePNG(config.outputFile);
     } catch (PlotException e) {
       throw new UtilException("Cannot write file. (" + e.getLocalizedMessage() + ")");
     }

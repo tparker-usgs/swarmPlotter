@@ -38,7 +38,7 @@ public class HeliPlotter extends Plotter {
 
     try {
       byte[] bytes = settings.createPlot(heliData).getPNGBytes();
-      Path path = Paths.get("heli.png");
+      Path path = Paths.get(config.outputFile);
       Files.write(path, bytes);
     } catch (PlotException e) {
       throw new UtilException(e.getLocalizedMessage());
