@@ -64,23 +64,7 @@ public class SwarmPlotterArgs {
   }
 
 
-  private static final Parameter[] PARAMETERS = new Parameter[] {
-      new Switch("heliSuppressClip", JSAP.NO_SHORTFLAG, "heliSuppressClip",
-          "Do not highlight clipping."),
-      new Switch("heliForceCenter", JSAP.NO_SHORTFLAG, "heliForceCenter",
-          "Force center heli rows."),
-      new Switch("spectrogramWave", JSAP.NO_SHORTFLAG, "spectrogramWave",
-          "Plot waveform above spectrogram."),
-      new Switch("plotLabel", 'l', "plotLabel", "Label plot."),
-      new FlaggedOption("plotType", new PlotTypeParser(), JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p',
-          "plotType", String.format("One of:  %s\n", PlotType.types())),
-      new FlaggedOption("channel", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'c',
-          "channel", "channel as S_C_N_L\n"),
-      new FlaggedOption("dataSource", new SeismicDataSourceParser(), JSAP.NO_DEFAULT, JSAP.REQUIRED, 's',
-          "dataSource", "Seismic data source.\n"),
-     new FlaggedOption("heliRowSpan", JSAP.DOUBLE_PARSER, DEFAULT_HELI_ROW_SPAN, JSAP.NOT_REQUIRED, 'r',
-          "heliRowSpan", "Length of heli row in minutes\n")
-     };
+  private static final Parameter[] PARAMETERS = new Parameter[] {};
 
   /** If true, log more. */
   public final boolean verbose;
@@ -105,12 +89,12 @@ public class SwarmPlotterArgs {
   public final boolean plotLabel;
 
   public final Dimension dimension;
-  
+
   public final TimeZone timeZone;
-  
+
   public final SeismicDataSource seismicDataSource;
-  
-  
+
+
   public final String outputFile;
 
   /**
@@ -126,9 +110,27 @@ public class SwarmPlotterArgs {
     args = new VerboseArg(args);
     args = new TimeZoneArg(args);
     args = new DimensionArg(dimensionDefaults, args);
-    args.registerParameter(new UnflaggedOption("outputFile", JSAP.STRING_PARSER, JSAP.REQUIRED, "Output file name\n"));
+    args.registerParameter(new FlaggedOption("plotType", new PlotTypeParser(), JSAP.NO_DEFAULT,
+        JSAP.REQUIRED, 'p', "plotType", String.format("One of:  %s\n", PlotType.types())));
+    args.registerParameter(new FlaggedOption("channel", JSAP.STRING_PARSER, JSAP.NO_DEFAULT,
+        JSAP.REQUIRED, 'c', "channel", "channel as S_C_N_L\n"));
+    args.registerParameter(new FlaggedOption("dataSource", new SeismicDataSourceParser(),
+        JSAP.NO_DEFAULT, JSAP.REQUIRED, 's', "dataSource", "Seismic data source.\n"));
+    args.registerParameter(new Switch("heliSuppressClip", JSAP.NO_SHORTFLAG, "heliSuppressClip",
+        "Do not highlight clipping on helicorder."));
+    args.registerParameter(new Switch("heliForceCenter", JSAP.NO_SHORTFLAG, "heliForceCenter",
+        "Force center helicorder rows."));
+    args.registerParameter(
+        new FlaggedOption("heliRowSpan", JSAP.DOUBLE_PARSER, DEFAULT_HELI_ROW_SPAN,
+            JSAP.NOT_REQUIRED, 'r', "heliRowSpan", "Length of heli row in minutes\n"));
+    args.registerParameter(new Switch("plotLabel", 'l', "plotLabel", "Label helicorder plot."));
+    args.registerParameter(new Switch("spectrogramWave", JSAP.NO_SHORTFLAG, "spectrogramWave",
+        "Plot waveform above spectrogram."));
+    args.registerParameter(
+        new UnflaggedOption("outputFile", JSAP.STRING_PARSER, JSAP.REQUIRED, "Output file name\n"));
+
     JSAPResult jsapResult = null;
-    
+
     jsapResult = args.parse(commandLineArgs);
 
     if (!jsapResult.success()) {
@@ -149,7 +151,7 @@ public class SwarmPlotterArgs {
 
     timeZone = (TimeZone) jsapResult.getObject("timeZone");
     LOGGER.debug("Setting: timeZone={}", timeZone);
-    
+
     channel = jsapResult.getString("channel").replace('_', '$');
 
     heliRowSpan = jsapResult.getDouble("heliRowSpan") * 60;
@@ -159,13 +161,13 @@ public class SwarmPlotterArgs {
 
     heliForceCenter = jsapResult.contains("heliForceCenter");
     plotLabel = jsapResult.contains("plotLabel");
-    
-    seismicDataSource =  (SeismicDataSource) jsapResult.getObject("dataSource");
+
+    seismicDataSource = (SeismicDataSource) jsapResult.getObject("dataSource");
     LOGGER.debug("Setting: seismicDataSource={}", seismicDataSource);
 
     outputFile = jsapResult.getString("outputFile");
     LOGGER.debug("Setting: outputFile={}", outputFile);
-    
+
     if (jsapResult.contains("dimension")) {
       dimension = (Dimension) jsapResult.getObject("dimension");
     } else {
