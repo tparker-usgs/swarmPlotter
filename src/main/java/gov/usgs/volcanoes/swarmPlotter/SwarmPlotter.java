@@ -17,20 +17,15 @@ public class SwarmPlotter {
   /** my logger. */
   private static final Logger LOGGER = LoggerFactory.getLogger(SwarmPlotter.class);
 
-  private final SwarmPlotterArgs config;
   private Plotter plotter;
-  
+
   /**
    * Class constructor.
    *
    * @param configFile my config file
    */
   public SwarmPlotter(final SwarmPlotterArgs config) {
-
-    final long now = System.currentTimeMillis();
     LOGGER.info("Launching Swarm Plotter ({})", Version.VERSION_STRING);
-
-    this.config = config;
     
     plotter = config.plotType.getPlotter(config);
   }
@@ -38,28 +33,24 @@ public class SwarmPlotter {
   public void plot() throws UtilException {
     plotter.plot();
   }
+
   /**
    * Where it all begins.
    *
    * @param args command line args
    * @throws UtilException 
+   * @throws ArgumentException when command line cannot be parsed
    * @throws Exception when things go wrong
    */
-  public static void main(final String[] args) throws UtilException  {
+  public static void main(final String[] args) throws UtilException, ArgumentException {
     SwarmPlotterArgs config = null;
-    try {
       config = new SwarmPlotterArgs(args);
       if (!config.help) {
-        final SwarmPlotter swarmPlotter = new SwarmPlotter(config);      
+        final SwarmPlotter swarmPlotter = new SwarmPlotter(config);
         swarmPlotter.plot();
-        
+
         // TODO: Trace down lingering threads and get rid of exit call.
         System.exit(0);
       }
-    } catch (ArgumentException e) {
-      if (config != null && !config.help) {
-        LOGGER.error("Unable to continue. Exiting.");
-      }
-    }
-    }
+  }
 }
