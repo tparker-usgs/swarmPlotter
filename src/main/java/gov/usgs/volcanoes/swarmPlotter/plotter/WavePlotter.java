@@ -1,15 +1,9 @@
 package gov.usgs.volcanoes.swarmPlotter.plotter;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.TimeZone;
 
 import org.apache.log4j.Logger;
 
-import gov.usgs.plot.HelicorderSettings;
 import gov.usgs.plot.Plot;
 import gov.usgs.plot.PlotException;
 import gov.usgs.plot.data.SliceWave;
@@ -26,11 +20,11 @@ public class WavePlotter extends Plotter {
   protected Wave waveData;
   protected double startTimeLocal;
   protected double endTimeLocal;
-  
+
   public WavePlotter(SwarmPlotterArgs config) {
     super(config);
   }
-  
+
   protected void getData() {
     final String channel = config.channel;
     final double startTime = J2kSec.fromEpoch(config.timeSpan.startTime);
@@ -39,7 +33,7 @@ public class WavePlotter extends Plotter {
     LOGGER.debug("getting data");
     config.seismicDataSource.establish();
     waveData = config.seismicDataSource.getWave(channel, startTime, endTime);
-    
+
     long st = J2kSec.asEpoch(startTime);
     st += config.timeZone.getOffset(st);
     startTimeLocal = J2kSec.fromEpoch(st);
@@ -71,7 +65,7 @@ public class WavePlotter extends Plotter {
     wr.setViewTimes(startTimeLocal, endTimeLocal, config.timeZone.getDisplayName());
     wr.setLocation(50, 20, config.dimension.width - 80, config.dimension.height - 50);
     wr.update();
-    
+
     plot.addRenderer(wr);
     try {
       plot.writePNG(config.outputFile);

@@ -2,8 +2,6 @@ package gov.usgs.volcanoes.swarmPlotter.plotter;
 
 import java.awt.Color;
 
-import org.apache.log4j.Logger;
-
 import gov.usgs.plot.Plot;
 import gov.usgs.plot.PlotException;
 import gov.usgs.plot.data.SliceWave;
@@ -14,9 +12,8 @@ import gov.usgs.volcanoes.swarmPlotter.SwarmPlotterArgs;
 
 public class SpectrogramPlotter extends WavePlotter {
 
-  private static final Logger LOGGER = Logger.getLogger(SpectrogramPlotter.class);
+  private static final double WAVE_HEIGHT_RATIO = .2;
 
-  private static  final double WAVE_HEIGHT_RATIO = .2;
   public SpectrogramPlotter(SwarmPlotterArgs config) {
     super(config);
   }
@@ -27,11 +24,11 @@ public class SpectrogramPlotter extends WavePlotter {
     Plot plot = new Plot();
     plot.setSize(config.dimension);
     plot.setBackgroundColor(new Color(0.97f, 0.97f, 0.97f));
-    
-    
-    int waveHeight = (int)(config.dimension.height * WAVE_HEIGHT_RATIO);
+
+
+    int waveHeight = (int) (config.dimension.height * WAVE_HEIGHT_RATIO);
     int spectrogramHeight = config.dimension.height - waveHeight;
-    
+
     SliceWaveRenderer wr = new SliceWaveRenderer();
 
     wr.setColor(Color.BLUE);

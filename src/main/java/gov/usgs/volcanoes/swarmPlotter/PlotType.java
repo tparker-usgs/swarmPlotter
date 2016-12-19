@@ -6,7 +6,6 @@ import gov.usgs.volcanoes.swarmPlotter.plotter.HeliPlotter;
 import gov.usgs.volcanoes.swarmPlotter.plotter.Plotter;
 import gov.usgs.volcanoes.swarmPlotter.plotter.SpectrogramPlotter;
 import gov.usgs.volcanoes.swarmPlotter.plotter.WavePlotter;
-import gov.usgs.volcanoes.swarmPlotter.plotter.SpectrogramPlotter;
 
 /**
  * Enumerate known plot types.
@@ -14,9 +13,7 @@ import gov.usgs.volcanoes.swarmPlotter.plotter.SpectrogramPlotter;
  * @author Tom Parker
  */
 public enum PlotType {
-  HELI(HeliPlotter.class), 
-  WAVE(WavePlotter.class),
-  SPECTROGRAM(SpectrogramPlotter.class);
+  HELI(HeliPlotter.class), WAVE(WavePlotter.class), SPECTROGRAM(SpectrogramPlotter.class);
 
   private Class<? extends Plotter> plotter;
 
@@ -32,10 +29,11 @@ public enum PlotType {
     return sb.substring(0, sb.length() - 2);
   }
 
+  @Override
   public String toString() {
     return this.name().toLowerCase();
   }
-  
+
   public Plotter getPlotter(SwarmPlotterArgs config) throws IllegalArgumentException {
     try {
       return plotter.getConstructor(SwarmPlotterArgs.class).newInstance(config);

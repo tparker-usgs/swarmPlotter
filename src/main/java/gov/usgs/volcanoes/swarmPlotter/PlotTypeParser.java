@@ -8,11 +8,6 @@ package gov.usgs.volcanoes.swarmPlotter;
 import com.martiansoftware.jsap.ParseException;
 import com.martiansoftware.jsap.StringParser;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-
 /**
  * Parse a date from a command line argument.
  * 
@@ -26,7 +21,8 @@ public class PlotTypeParser extends StringParser {
     try {
       result = PlotType.valueOf(arg.toUpperCase());
     } catch (IllegalArgumentException e) {
-      throw new ParseException("I don't know how to create a '" + arg + "' plot. Try one of: " + PlotType.types());
+      throw new ParseException(
+          "I don't know how to create a '" + arg + "' plot. Try one of: " + PlotType.types());
     }
 
     return result;
