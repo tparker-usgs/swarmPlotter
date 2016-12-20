@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import gov.usgs.volcanoes.swarmPlotter.plotter.HeliPlotter;
 import gov.usgs.volcanoes.swarmPlotter.plotter.Plotter;
+import gov.usgs.volcanoes.swarmPlotter.plotter.SpectraPlotter;
 import gov.usgs.volcanoes.swarmPlotter.plotter.SpectrogramPlotter;
 import gov.usgs.volcanoes.swarmPlotter.plotter.WavePlotter;
 
@@ -13,7 +14,10 @@ import gov.usgs.volcanoes.swarmPlotter.plotter.WavePlotter;
  * @author Tom Parker
  */
 public enum PlotType {
-  HELI(HeliPlotter.class), WAVE(WavePlotter.class), SPECTROGRAM(SpectrogramPlotter.class);
+  HELI(HeliPlotter.class), 
+  WAVE(WavePlotter.class), 
+  SPECTROGRAM(SpectrogramPlotter.class),
+  SPECTRA(SpectraPlotter.class);
 
   private Class<? extends Plotter> plotter;
 
@@ -38,7 +42,6 @@ public enum PlotType {
     try {
       return plotter.getConstructor(SwarmPlotterArgs.class).newInstance(config);
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       throw new IllegalArgumentException(e);
     }
   }
