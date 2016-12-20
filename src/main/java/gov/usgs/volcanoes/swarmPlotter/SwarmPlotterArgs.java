@@ -52,10 +52,12 @@ public class SwarmPlotterArgs {
     DEFAULT_DIMENSION = new HashMap<PlotType, Dimension>();
     DEFAULT_DIMENSION.put(PlotType.HELI, new Dimension(800, 800));
     DEFAULT_DIMENSION.put(PlotType.WAVE, new Dimension(750, 280));
+    DEFAULT_DIMENSION.put(PlotType.SPECTRA, new Dimension(750, 280));
     DEFAULT_DIMENSION.put(PlotType.SPECTROGRAM, new Dimension(925, 280));
 
     StringBuffer sb = new StringBuffer();
-    for (PlotType type : DEFAULT_DIMENSION.keySet()) {
+    // This is intentional. All plot types must have a default dimension!
+    for (PlotType type : PlotType.values()) {
       Dimension d = DEFAULT_DIMENSION.get(type);
       sb.append(type).append(": ").append(d.height).append(" x ").append(d.width).append("\n");
     }
@@ -134,6 +136,7 @@ public class SwarmPlotterArgs {
     jsapResult = args.parse(commandLineArgs);
 
     if (!jsapResult.success()) {
+      LOGGER.error("Cannot parse command line. Try --help argument");
       throw new ArgumentException("Unable to parse command line.");
     }
 
