@@ -26,7 +26,7 @@ public class SwarmPlotter {
    */
   public SwarmPlotter(final SwarmPlotterArgs config) {
     LOGGER.info("Launching Swarm Plotter ({})", Version.VERSION_STRING);
-    
+
     plotter = config.plotType.getPlotter(config);
   }
 
@@ -42,9 +42,9 @@ public class SwarmPlotter {
    * @throws ArgumentException when command line cannot be parsed
    * @throws Exception when things go wrong
    */
-  public static void main(final String[] args) throws UtilException, ArgumentException {
-    SwarmPlotterArgs config = null;
-      config = new SwarmPlotterArgs(args);
+  public static void main(final String[] args) throws UtilException {
+    try {
+      SwarmPlotterArgs config = new SwarmPlotterArgs(args);
       if (!config.help) {
         final SwarmPlotter swarmPlotter = new SwarmPlotter(config);
         swarmPlotter.plot();
@@ -52,5 +52,7 @@ public class SwarmPlotter {
         // TODO: Trace down lingering threads and get rid of exit call.
         System.exit(0);
       }
+    } catch (ArgumentException ignore) {
+    }
   }
 }
