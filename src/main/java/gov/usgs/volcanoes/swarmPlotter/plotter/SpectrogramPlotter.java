@@ -49,7 +49,7 @@ public class SpectrogramPlotter extends WavePlotter {
 
     sr.setLogPower(true);
     sr.setMinFreq(0);
-    sr.setMaxFreq(20);
+    sr.setMaxFreq(config.maxFreq);
     sr.setNfft(0);
     sr.setBinSize(256);
     sr.setOverlap(0.859375);

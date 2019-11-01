@@ -48,6 +48,7 @@ public class SwarmPlotterArgs {
   public static final String DEFAULT_HELI_ROW_SPAN = "30";
   public static final Map<PlotType, Dimension> DEFAULT_DIMENSION;
   public static final String DEFAULT_COLOR_MAP = "jet";
+  public static final String DEFAULT_MAX_FREQ = "20";
   private static final String dimensionDefaults;
 
   static {
@@ -101,6 +102,8 @@ public class SwarmPlotterArgs {
   public final Spectrum colorMap;
 
   public final String outputFile;
+  
+  public final Double maxFreq;
 
   /**
    * Class constructor.
@@ -133,6 +136,9 @@ public class SwarmPlotterArgs {
         "Plot waveform above spectrogram."));
     args.registerParameter(new FlaggedOption("colormap", new ColorMapParser(), DEFAULT_COLOR_MAP,
         JSAP.NOT_REQUIRED, JSAP.NO_SHORTFLAG, "colormap", String.format("One of:  %s\n", ColorMapType.types())));
+    args.registerParameter(
+        new FlaggedOption("maxFreq", JSAP.DOUBLE_PARSER, DEFAULT_MAX_FREQ,
+            JSAP.NOT_REQUIRED, JSAP.NO_SHORTFLAG, "maxFreq", "Maximum \n"));
     args.registerParameter(
         new UnflaggedOption("outputFile", JSAP.STRING_PARSER, JSAP.REQUIRED, "Output file name\n"));
 
@@ -175,6 +181,10 @@ public class SwarmPlotterArgs {
 
     colorMap = (Spectrum) jsapResult.getObject("colormap");
     LOGGER.debug("Setting: colormap={}", colorMap);
+    
+    maxFreq = jsapResult.getDouble("maxFreq");
+    LOGGER.debug("Setting: maxFreq={}", maxFreq);
+    
     outputFile = jsapResult.getString("outputFile");
     LOGGER.debug("Setting: outputFile={}", outputFile);
 
