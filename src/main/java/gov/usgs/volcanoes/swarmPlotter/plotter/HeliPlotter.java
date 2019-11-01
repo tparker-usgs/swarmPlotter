@@ -7,9 +7,9 @@ import java.nio.file.Paths;
 
 import org.apache.log4j.Logger;
 
-import gov.usgs.plot.HelicorderSettings;
-import gov.usgs.plot.PlotException;
-import gov.usgs.plot.data.HelicorderData;
+import gov.usgs.volcanoes.core.data.HelicorderData;
+import gov.usgs.volcanoes.core.legacy.plot.HelicorderSettings;
+import gov.usgs.volcanoes.core.legacy.plot.PlotException;
 import gov.usgs.volcanoes.core.time.J2kSec;
 import gov.usgs.volcanoes.core.util.UtilException;
 import gov.usgs.volcanoes.swarmPlotter.SwarmPlotterArgs;

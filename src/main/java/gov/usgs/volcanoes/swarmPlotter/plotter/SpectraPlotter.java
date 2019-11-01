@@ -2,10 +2,10 @@ package gov.usgs.volcanoes.swarmPlotter.plotter;
 
 import java.awt.Color;
 
-import gov.usgs.plot.Plot;
-import gov.usgs.plot.PlotException;
-import gov.usgs.plot.data.SliceWave;
-import gov.usgs.plot.render.wave.SpectraRenderer;
+import gov.usgs.volcanoes.core.data.SliceWave;
+import gov.usgs.volcanoes.core.legacy.plot.Plot;
+import gov.usgs.volcanoes.core.legacy.plot.PlotException;
+import gov.usgs.volcanoes.core.legacy.plot.render.wave.SpectraRenderer;
 import gov.usgs.volcanoes.core.util.UtilException;
 import gov.usgs.volcanoes.swarmPlotter.SwarmPlotterArgs;
 

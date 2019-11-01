@@ -2,11 +2,11 @@ package gov.usgs.volcanoes.swarmPlotter.plotter;
 
 import java.awt.Color;
 
-import gov.usgs.plot.Plot;
-import gov.usgs.plot.PlotException;
-import gov.usgs.plot.data.SliceWave;
-import gov.usgs.plot.render.wave.SliceWaveRenderer;
-import gov.usgs.plot.render.wave.SpectrogramRenderer;
+import gov.usgs.volcanoes.core.data.SliceWave;
+import gov.usgs.volcanoes.core.legacy.plot.Plot;
+import gov.usgs.volcanoes.core.legacy.plot.PlotException;
+import gov.usgs.volcanoes.core.legacy.plot.render.wave.SliceWaveRenderer;
+import gov.usgs.volcanoes.core.legacy.plot.render.wave.SpectrogramRenderer;
 import gov.usgs.volcanoes.core.util.UtilException;
 import gov.usgs.volcanoes.swarmPlotter.SwarmPlotterArgs;
 
@@ -55,6 +55,7 @@ public class SpectrogramPlotter extends WavePlotter {
     sr.setOverlap(0.859375);
     sr.setMaxPower(120);
     sr.setMinPower(20);
+    sr.setSpectrum(config.colorMap);
 
     sr.setViewTimes();
     sr.setTimeZone(config.timeZone.getDisplayName());

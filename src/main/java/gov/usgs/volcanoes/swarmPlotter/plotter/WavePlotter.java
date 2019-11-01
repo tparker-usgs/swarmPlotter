@@ -4,11 +4,11 @@ import java.awt.Color;
 
 import org.apache.log4j.Logger;
 
-import gov.usgs.plot.Plot;
-import gov.usgs.plot.PlotException;
-import gov.usgs.plot.data.SliceWave;
-import gov.usgs.plot.data.Wave;
-import gov.usgs.plot.render.wave.SliceWaveRenderer;
+import gov.usgs.volcanoes.core.data.SliceWave;
+import gov.usgs.volcanoes.core.data.Wave;
+import gov.usgs.volcanoes.core.legacy.plot.Plot;
+import gov.usgs.volcanoes.core.legacy.plot.PlotException;
+import gov.usgs.volcanoes.core.legacy.plot.render.wave.SliceWaveRenderer;
 import gov.usgs.volcanoes.core.time.J2kSec;
 import gov.usgs.volcanoes.core.util.UtilException;
 import gov.usgs.volcanoes.swarmPlotter.SwarmPlotterArgs;
@@ -31,7 +31,7 @@ public class WavePlotter extends Plotter {
     final double endTime = J2kSec.fromEpoch(config.timeSpan.endTime);
 
     LOGGER.debug("getting data");
-    config.seismicDataSource.establish();
+//    config.seismicDataSource.establish();
     waveData = config.seismicDataSource.getWave(channel, startTime, endTime);
 
     long st = J2kSec.asEpoch(startTime);

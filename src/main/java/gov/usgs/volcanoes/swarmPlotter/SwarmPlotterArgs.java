@@ -27,6 +27,7 @@ import gov.usgs.volcanoes.core.args.decorator.DimensionArg;
 import gov.usgs.volcanoes.core.args.decorator.TimeSpanArg;
 import gov.usgs.volcanoes.core.args.decorator.TimeZoneArg;
 import gov.usgs.volcanoes.core.args.decorator.VerboseArg;
+import gov.usgs.volcanoes.core.legacy.plot.color.Spectrum;
 import gov.usgs.volcanoes.core.time.TimeSpan;
 import gov.usgs.volcanoes.swarm.data.SeismicDataSource;
 
@@ -46,6 +47,7 @@ public class SwarmPlotterArgs {
 
   public static final String DEFAULT_HELI_ROW_SPAN = "30";
   public static final Map<PlotType, Dimension> DEFAULT_DIMENSION;
+  public static final String DEFAULT_COLOR_MAP = "jet";
   private static final String dimensionDefaults;
 
   static {
@@ -96,6 +98,7 @@ public class SwarmPlotterArgs {
 
   public final SeismicDataSource seismicDataSource;
 
+  public final Spectrum colorMap;
 
   public final String outputFile;
 
@@ -111,7 +114,7 @@ public class SwarmPlotterArgs {
     args = new TimeSpanArg(INPUT_TIME_FORMAT, true, args);
     args = new VerboseArg(args);
     args = new TimeZoneArg(args);
-    args = new DimensionArg(dimensionDefaults, args);
+    args = new DimensionArg(args);
     args.registerParameter(new FlaggedOption("plotType", new PlotTypeParser(), JSAP.NO_DEFAULT,
         JSAP.REQUIRED, 'p', "plotType", String.format("One of:  %s\n", PlotType.types())));
     args.registerParameter(new FlaggedOption("channel", JSAP.STRING_PARSER, JSAP.NO_DEFAULT,
@@ -128,6 +131,8 @@ public class SwarmPlotterArgs {
     args.registerParameter(new Switch("plotLabel", 'l', "plotLabel", "Label helicorder plot."));
     args.registerParameter(new Switch("spectrogramWave", JSAP.NO_SHORTFLAG, "spectrogramWave",
         "Plot waveform above spectrogram."));
+    args.registerParameter(new FlaggedOption("colormap", new ColorMapParser(), DEFAULT_COLOR_MAP,
+        JSAP.NOT_REQUIRED, JSAP.NO_SHORTFLAG, "colormap", String.format("One of:  %s\n", ColorMapType.types())));
     args.registerParameter(
         new UnflaggedOption("outputFile", JSAP.STRING_PARSER, JSAP.REQUIRED, "Output file name\n"));
 
@@ -168,6 +173,8 @@ public class SwarmPlotterArgs {
     seismicDataSource = (SeismicDataSource) jsapResult.getObject("dataSource");
     LOGGER.debug("Setting: seismicDataSource={}", seismicDataSource);
 
+    colorMap = (Spectrum) jsapResult.getObject("colormap");
+    LOGGER.debug("Setting: colormap={}", colorMap);
     outputFile = jsapResult.getString("outputFile");
     LOGGER.debug("Setting: outputFile={}", outputFile);
 
